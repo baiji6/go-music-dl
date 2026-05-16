@@ -1133,7 +1133,7 @@ const QR_LOGIN_COOKIE_SOURCES = {
     qq_wx: 'qq'
 };
 const QR_LOGIN_POLL_INTERVAL_MS = {
-    soda: 7000
+    soda: 2000
 };
 
 let qrLoginState = {
@@ -1282,12 +1282,8 @@ function startQRLogin(source) {
             renderQRLoginSession(session);
             setQRLoginStatus(source === 'qq_wx' ? '二维码已生成，请打开微信扫码' : '二维码已生成，请打开 App 扫码');
             const pollInterval = QR_LOGIN_POLL_INTERVAL_MS[source] || 2200;
-            if (source === 'soda') {
-                qrLoginState.pollTimer = window.setInterval(pollQRLogin, pollInterval);
-            } else {
-                pollQRLogin();
-                qrLoginState.pollTimer = window.setInterval(pollQRLogin, pollInterval);
-            }
+            pollQRLogin();
+            qrLoginState.pollTimer = window.setInterval(pollQRLogin, pollInterval);
         })
         .catch(error => {
             setQRLoginLoading(false);
@@ -1347,7 +1343,7 @@ function showSodaSMSLogin(result) {
     const extra = qrLoginResultExtra(result);
     const upSMSMobile = String(extra.up_sms_mobile || '').trim();
     const upSMSContent = String(extra.up_sms_content || '').trim();
-    const smsMode = qrLoginExtraFlag(extra, 'need_user_sms') || String(extra.sms_mode || '').toLowerCase() === 'up' || upSMSMobile || upSMSContent ? 'up' : '';
+    const smsMode = qrLoginExtraFlag(extra, 'need_user_sms') || String(extra.sms_mode || '').toLowerCase() === 'up' ? 'up' : '';
     qrLoginState.sms = {
         encryptUID: String(extra.encrypt_uid || qrLoginState.sms.encryptUID || ''),
         verifyParams: String(extra.verify_params || qrLoginState.sms.verifyParams || ''),
