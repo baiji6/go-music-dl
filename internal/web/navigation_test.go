@@ -393,6 +393,25 @@ func TestSearchSourceSelectorSupportsMobileCollapse(t *testing.T) {
 	}
 }
 
+func TestAppToastFitsMobileViewport(t *testing.T) {
+	cssContent, err := templateFS.ReadFile("templates/static/css/style.css")
+	if err != nil {
+		t.Fatalf("ReadFile(style.css): %v", err)
+	}
+
+	css := string(cssContent)
+	for _, want := range []string{
+		`.app-toast-container {`,
+		`right: 18px;`,
+		`width: min(360px, calc(100vw - 36px));`,
+		`box-sizing: border-box;`,
+	} {
+		if !strings.Contains(css, want) {
+			t.Fatalf("style.css missing mobile-safe toast rule %q", want)
+		}
+	}
+}
+
 func TestPaginationTemplatesExposeShortcutMetadata(t *testing.T) {
 	paths := []string{
 		"templates/partials/song_list.html",
